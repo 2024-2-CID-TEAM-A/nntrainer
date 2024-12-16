@@ -11,6 +11,7 @@
  */
 
 # include <sstream>
+# include <bottleneck_layer.h>
 
 # include <memory>
 # include <model.h>
@@ -154,8 +155,10 @@ int main(int argc, char * argv[]) {
  }
  std :: string filename = argv[1];
 
- int image_channels = 1;
- int output_channels = 4;
+ int constexpr image_channels = 1;
+ int constexpr output_channels = 4;
+ int constexpr h_dim = 256;
+ int constexpr z_dim = 16;
  std :: unique_ptr<ml :: train :: Model> model;
  model = createModel(ml :: train :: ModelType :: NEURAL_NET);
  model -> addLayer(ml :: train :: createLayer("conv2d", {
@@ -206,9 +209,26 @@ int main(int argc, char * argv[]) {
  model -> addLayer(ml :: train :: createLayer("dropout", {
   withKey("dropout_rate", 0.8),
  }));
- model -> addLayer(ml :: train :: createLayer("flatten"));
- model -> addLayer(ml :: train :: createLayer("bottleneck")); // TODO
+ model -> addLayer(ml :: train :: createLayer("flatten", {
+  withKey("name", "h"),
+ }));
  model -> addLayer(ml :: train :: createLayer("fully_connected", {
+  withKey("input_layers", "h"),
+  withKey("name", "fc1"),
+  withKey("unit", z_dim),
+ }));
+ model -> addLayer(ml :: train :: createLayer("fully_connected", {
+  withKey("input_layers", "h"),
+  withKey("name", "fc2"),
+  withKey("unit", z_dim),
+ }));
+ model -> addLayer(ml :: train :: createLayer("bottleneck", {
+  withKey("input_layers", {"fc1", "fc2"}),
+  withKey("name", "reparametrize"),
+  withKey("unit", z_dim),
+ }));
+ model -> addLayer(ml :: train :: createLayer("fully_connected", {
+  withKey("input_layers", "reparametrize"),
   withKey("unit", 256),
   withKey("activation", "relu"),
  }));

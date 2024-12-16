@@ -1,5 +1,6 @@
 VAE_sources = [
  'main.cpp',
+ 'bottleneck_layer.cpp',
 ]
 
 VAE_dependencies = [
