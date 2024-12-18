@@ -2,32 +2,34 @@
 /**
  * Copyright (C) 2024 Daniel Jang <minhyukjang@snu.ac.kr>
  *
- * @file   upsample_layer.h
+ * @file   vae_loss_layer.h
  * @brief  
  * @see    https://github.com/nnstreamer/nntrainer
  * @author Daniel Jang <minhyukjang@snu.ac.kr>
  * @date   
  */
 
-# ifndef __BOTTLENECK_LAYER_H__
-# define __BOTTLENECK_LAYER_H__
+# ifndef __VAE_LOSS_LAYER_H__
+# define __VAE_LOSS_LAYER_H__
 
 # include <layer_devel.h>
 # include <layer_context.h>
 
+# include <loss_layer.h>
+
 namespace custom {
- class BottleneckLayer: public nntrainer :: Layer {
+ class VAELossLayer: public nntrainer :: LossLayer {
   public:
-  BottleneckLayer(): Layer() {};
-  ~ BottleneckLayer() = default;
+  VAELossLayer(): LossLayer() {};
+  ~ VAELossLayer() = default;
   void finalize(nntrainer :: InitLayerContext &) override;
   void forwarding(nntrainer :: RunLayerContext &, bool) override;
   void calcDerivative(nntrainer :: RunLayerContext &) override;
-  bool supportBackwarding() const override { return true; };
   void setProperty(const std :: vector<std :: string> &) override {};
-  std :: string const getType() const override { return BottleneckLayer :: type; };
-  std :: string const static inline type = "bottleneck";
-  size_t sigmaepsilon_idx;
+  // bool requireLabel() const override { return true; };
+  // bool supportBackwarding() const override { return true; };
+  std :: string const getType() const override { return VAELossLayer :: type; };
+  std :: string const static inline type = "vae_loss";
  };
 };
 

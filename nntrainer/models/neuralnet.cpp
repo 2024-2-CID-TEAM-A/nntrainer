@@ -489,6 +489,9 @@ void NeuralNetwork::backwarding(int iteration,
 
     if (node->needsCalcDerivative()) {
       node->calcDerivative();
+      // std :: cout << node -> getName() << std :: endl;
+      // std :: cout << "Incoming: " << node -> getRunContext().getIncomingDerivative(0) << std :: endl;
+      // std :: cout << "Outgoing: " << node -> getRunContext().getOutgoingDerivative(0) << std :: endl;
     }
 
     model_graph.flushCacheExcept(std::get<3>(node->getExecutionOrder()));

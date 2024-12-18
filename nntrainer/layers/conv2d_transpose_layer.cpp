@@ -109,7 +109,7 @@ static void col2im_transpose(
             if (h >= H || w >= W)
               continue;
             float *val = image.getAddress<float>(0, c, h, w);
-            *val += col_matrix.getValue<float>(0, 0, out_i, out_j);
+            *val += col_matrix.getValue<float>(0, 0, out_j, out_i);
             // out_data[(out_i)*owidth + out_j] += in.getValue<float>(0,c,h,w)
           }
         }
