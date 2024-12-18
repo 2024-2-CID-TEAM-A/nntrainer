@@ -29,6 +29,7 @@ namespace custom {
   nntrainer :: Tensor const & logvar = context.getInput(LOGVAR_IDX);
   nntrainer :: Tensor & sigmaepsilon = context.getTensor(sigmaepsilon_idx);
   nntrainer :: Tensor & output = context.getOutput(OUTPUT_IDX);
+  std :: cout << "bottleneck in " << logvar << std::endl;
   // std :: cerr << mu.getDim() << std :: endl;
   // std :: cerr << logvar.getDim() << std :: endl;
   // std :: cerr << output.getDim() << std :: endl;
@@ -38,8 +39,11 @@ namespace custom {
   });
   sigmaepsilon.setRandNormal(0, 1);
   sigmaepsilon.multiply_i(sigma);
-  output = nntrainer :: Tensor {sigmaepsilon}; // Copied?
+  std :: cout << "sigmaepsilon: "<< sigmaepsilon << std :: endl;
+  std :: cout << "sigma" << sigma << std :: endl;
+  output.copy(sigmaepsilon); // Copied?
   output.add_i(mu);
+  std :: cout << "bottleneck out " << output << std::endl;
  }
  void BottleneckLayer :: calcDerivative(nntrainer :: RunLayerContext & context) {
   nntrainer :: Tensor & dJdmu = context.getOutgoingDerivative(MU_IDX);
@@ -47,8 +51,8 @@ namespace custom {
   nntrainer :: Tensor const & sigmaepsilon = context.getTensor(sigmaepsilon_idx);
   nntrainer :: Tensor const & dJdz = context.getIncomingDerivative(OUTPUT_IDX);
   // std :: cout << "AA\n" << dJdmu << dJdlogvar << sigmaepsilon << dJdz << std :: endl;
-  dJdmu = nntrainer :: Tensor {dJdz}; // Copied?
-  dJdlogvar = sigmaepsilon.multiply(dJdz);
+  dJdmu.copy(dJdz); // Copied?
+  dJdlogvar.copy(sigmaepsilon.multiply(dJdz));
   dJdlogvar.divide_i(2);
  }
 }
